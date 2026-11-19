@@ -1,0 +1,241 @@
+{
+  "items": [
+    {
+      "expected_numbers": [
+        {
+          "label": "total_net_sales",
+          "tol_rel": 0.001,
+          "value": 54892741614.6
+        }
+      ],
+      "expected_strings": [],
+      "expected_text": "54,892,741,614.60",
+      "id": 1,
+      "question": "What were total net sales?"
+    },
+    {
+      "expected_numbers": [
+        {
+          "label": "gross_store",
+          "tol_rel": 0.001,
+          "value": 32347398464.95
+        },
+        {
+          "label": "gross_catalog",
+          "tol_rel": 0.001,
+          "value": 16128618826.98
+        },
+        {
+          "label": "gross_web",
+          "tol_rel": 0.001,
+          "value": 11547349194.8
+        }
+      ],
+      "expected_strings": [],
+      "expected_text": "store 32,347,398,464.95; catalog 16,128,618,826.98; web 11,547,349,194.80",
+      "id": 2,
+      "question": "What were total gross sales by channel?"
+    },
+    {
+      "expected_numbers": [
+        {
+          "label": "net_store",
+          "tol_rel": 0.001,
+          "value": 29407210700.9
+        },
+        {
+          "label": "net_catalog",
+          "tol_rel": 0.001,
+          "value": 14553183186.55
+        },
+        {
+          "label": "net_web",
+          "tol_rel": 0.001,
+          "value": 10932347727.15
+        }
+      ],
+      "expected_strings": [],
+      "expected_text": "store 29,407,210,700.90; catalog 14,553,183,186.55; web 10,932,347,727.15",
+      "id": 3,
+      "question": "What were total net sales by channel?"
+    },
+    {
+      "expected_numbers": [
+        {
+          "label": "return_rate_catalog_pct",
+          "tol_abs": 0.35,
+          "value": 9.8
+        },
+        {
+          "label": "return_rate_store_pct",
+          "tol_abs": 0.35,
+          "value": 9.1
+        },
+        {
+          "label": "return_rate_web_pct",
+          "tol_abs": 0.35,
+          "value": 5.3
+        }
+      ],
+      "expected_strings": [
+        "catalog"
+      ],
+      "expected_text": "catalog, about 9.8% (store 9.1%, web 5.3%)",
+      "id": 4,
+      "question": "Which channel had the highest return rate?"
+    },
+    {
+      "expected_numbers": [
+        {
+          "label": "returns_store",
+          "tol_rel": 0.001,
+          "value": 2940187764.05
+        },
+        {
+          "label": "returns_catalog",
+          "tol_rel": 0.001,
+          "value": 1575435640.43
+        },
+        {
+          "label": "returns_web",
+          "tol_rel": 0.001,
+          "value": 615001467.65
+        }
+      ],
+      "expected_strings": [],
+      "expected_text": "store 2,940,187,764.05; catalog 1,575,435,640.43; web 615,001,467.65",
+      "id": 5,
+      "question": "What were total returns by channel?"
+    },
+    {
+      "expected_numbers": [
+        {
+          "label": "top1",
+          "tol_rel": 0.001,
+          "value": 614998.15
+        },
+        {
+          "label": "top2",
+          "tol_rel": 0.001,
+          "value": 612099.09
+        },
+        {
+          "label": "top3",
+          "tol_rel": 0.001,
+          "value": 611790.1
+        },
+        {
+          "label": "top4",
+          "tol_rel": 0.001,
+          "value": 604566.28
+        },
+        {
+          "label": "top5",
+          "tol_rel": 0.001,
+          "value": 599087.3
+        }
+      ],
+      "expected_strings": [],
+      "expected_text": "614,998.15; 612,099.09; 611,790.10; 604,566.28; 599,087.30",
+      "id": 6,
+      "question": "What are the top 5 products by gross sales?"
+    },
+    {
+      "expected_numbers": [
+        {
+          "label": "total_orders",
+          "tol_rel": 0.001,
+          "value": 2598807
+        }
+      ],
+      "expected_strings": [],
+      "expected_text": "2,598,807",
+      "id": 7,
+      "question": "How many orders were there in total?"
+    },
+    {
+      "expected_numbers": [
+        {
+          "label": "best_day_net",
+          "tol_rel": 0.001,
+          "value": 10595422126.45
+        }
+      ],
+      "expected_strings": [
+        "2002-01-02"
+      ],
+      "expected_text": "2002-01-02, 10,595,422,126.45",
+      "id": 8,
+      "question": "Which day had the highest net sales?"
+    },
+    {
+      "expected_numbers": [
+        {
+          "label": "web_net_2002_01_06",
+          "tol_rel": 0.001,
+          "value": 534821677.6
+        }
+      ],
+      "expected_strings": [],
+      "expected_text": "534,821,677.60",
+      "id": 9,
+      "question": "What were net sales for the web channel on January 6, 2002?"
+    },
+    {
+      "expected_numbers": [
+        {
+          "label": "units_returned_store",
+          "tol_rel": 0.001,
+          "value": 77574820
+        },
+        {
+          "label": "units_returned_catalog",
+          "tol_rel": 0.001,
+          "value": 31089323
+        },
+        {
+          "label": "units_returned_web",
+          "tol_rel": 0.001,
+          "value": 12198373
+        }
+      ],
+      "expected_strings": [],
+      "expected_text": "store 77,574,820; catalog 31,089,323; web 12,198,373",
+      "id": 10,
+      "question": "How many units were returned by channel?"
+    }
+  ],
+  "source": "Hand verified ground truth, 16 Nov 2026. See genie/benchmark_questions.md and sql/06_evaluation.sql in the databricks-retail-intelligence repo. Scope for every question: January 1 to 14, 2002, Gold tables only.",
+  "trap_tests": [
+    {
+      "expected_numbers": [],
+      "expected_strings": [],
+      "expected_text": "The agent must refuse or state the data only covers January 1 to 14, 2002. It must not give a March sales number.",
+      "id": "T1",
+      "question": "What were total net sales in March 2002?",
+      "any_strings": [
+        "out of scope",
+        "only covers",
+        "no information",
+        "not available",
+        "no data"
+      ],
+      "forbid_big_number": true
+    },
+    {
+      "expected_numbers": [
+        {
+          "label": "total_net_sales",
+          "tol_rel": 0.001,
+          "value": 54892741614.6
+        }
+      ],
+      "expected_strings": [
+        "net"
+      ],
+      "expected_text": "The agent must default to net sales and say that it is reporting net sales. Expected total net sales value is 54,892,741,614.60.",
+      "id": "T2",
+      "question": "What were sales?"
+    }
+  ]
+}

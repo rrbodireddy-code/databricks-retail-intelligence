@@ -136,6 +136,14 @@ answered with net sales and said so.
 
 ![Benchmark review](images/benchmark.png)
 
+Later I put the same 12 questions into MLflow GenAI evaluation and ran them
+against the live agent three times, scored by a numeric scorer I wrote and
+by MLflow's Correctness judge. The clean run scored 0.917 on the numeric
+scorer and 0.833 on the judge. It also caught something the single manual
+pass had missed: the best-day answer carries a wrong value, and it was
+wrong in all three runs. The full record, including the two runs that broke
+on my side before the clean one, is in [eval/RESULTS.md](eval/RESULTS.md).
+
 ## What I would do next
 
 - The slice is 14 days because of the free workspace. A real version would
@@ -144,3 +152,6 @@ answered with net sales and said so.
   full year.
 - Two small jobs are still open: putting the Job on a schedule, and adding
   Unity Catalog comments on the Gold tables.
+- The evaluation found two agent answers to work on: the best-day value,
+  which is wrong the same way every run, and the return-rate answer, which
+  names only the highest channel in its text.
