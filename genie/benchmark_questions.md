@@ -1,11 +1,17 @@
-# Genie benchmark (evaluation) questions
+# Genie benchmark questions
 
-10 questions run in the agent's Benchmark tab on 16 Nov 2026.
-Every expected answer was verified by hand in SQL first (see sql/06_evaluation.sql
-and the Phase 1-2 reconciliation). Result: 10/10 correct after manual review.
-Two automatic judge flags were false positives: the judge objected to which Gold
-table the agent read (gold_daily_net_sales instead of gold_daily_channel_sales);
-the values were exact in both cases.
+I ran these 10 questions in the agent's Benchmark tab on 16 Nov 2026. Every
+expected answer was worked out in SQL by hand before the run (see
+sql/06_evaluation.sql), and the Silver and Gold layers had already been
+reconciled in the earlier phases, so I knew what the right answers were
+before the agent said anything.
+
+Result: 10 out of 10 correct, after I reviewed the flagged ones myself. The
+automated judge flagged two answers. In both cases the values were exact;
+the judge objected to the agent reading gold_daily_net_sales where it
+expected gold_daily_channel_sales. I marked both good. The disagreement is
+worth keeping in mind: the judge checks the form of an answer as well as the
+numbers in it.
 
 | # | Question | Expected answer |
 |---|----------|-----------------|
@@ -20,8 +26,12 @@ the values were exact in both cases.
 | 9 | What were net sales for the web channel on January 6, 2002? | 534,821,677.60 |
 | 10 | How many units were returned by channel? | store 77,574,820; catalog 31,089,323; web 12,198,373 |
 
-## Trap tests (run manually in chat, both passed)
-- "What were total net sales in March 2002?" -> agent refused correctly:
-  the dataset only contains January 1-14, 2002. No number invented.
-- "What were sales?" -> agent defaulted to net sales and said so,
-  per the instructions.
+## Trap tests
+
+I ran these two by hand in the chat window, and both behaved the way the
+instructions say they should.
+
+- "What were total net sales in March 2002?" The agent refused, said the
+  dataset only contains January 1 to 14, 2002, and did not invent a number.
+- "What were sales?" The agent answered with net sales, and said that is
+  what it was reporting.

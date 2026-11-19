@@ -1,73 +1,119 @@
 # Retail Channel Sales Intelligence System
 
-Built on Databricks (Free Edition) with TPC-DS sample data (`samples.tpcds_sf1000`).
-Development slice: **1-14 January 2002**. Notebooks in `/Workspace/Demo_Project/`.
+A personal project I built on Databricks (Free Edition) using the TPC-DS sample
+data in `samples.tpcds_sf1000`. Everything here runs on a two week slice of the
+data, 1 to 14 January 2002, because the full sales data is about 5 billion rows
+and a free workspace is not the place to copy all of it. The notebooks are in
+`/Workspace/Demo_Project/` in my workspace.
 
-## Business problem
-Sales happen in three channels (store, web, catalog) with no single trusted view.
-Leadership needs one set of numbers, a dashboard, and a way for business users to
-ask questions directly, with every number provable back to source.
+## Why I built it
 
-## Architecture
-TPC-DS source -> **Silver** (unified channel sales and returns) -> **Gold** (daily
-aggregates) -> **AI/BI dashboard** + **Genie agent**. A Databricks Job rebuilds all
-layers from source and runs quality checks as a gate.
+In the source data, sales sit in three separate channel tables: store, web, and
+catalog. Nothing lines them up, so a simple question like "what did we sell
+yesterday" has three different answers depending on where you look. I wanted
+one set of numbers that a dashboard and an AI agent could both use, where I
+could trace any figure back to the source rows and prove it.
+
+## How it fits together
+
+The TPC-DS tables feed a Silver layer that unions the three channels into one
+sales table and one returns table. On top of that sit Gold tables with daily
+aggregates. The dashboard and the Genie agent read only Gold. A Databricks Job
+rebuilds everything from source and runs quality checks at the end. If the
+checks fail, the run fails.
 
 ## Tables (workspace.retail)
-- Silver: `silver_store_sales`, `silver_all_sales` (28,199,362 rows), `silver_all_returns`
+
+- Silver: `silver_store_sales`, `silver_all_sales` (28,199,362 rows for the slice), `silver_all_returns`
 - Gold: `gold_daily_channel_sales`, `gold_daily_net_sales`, `gold_daily_returns`, `gold_top_products`
 
-## Key definitions
-- **Gross sales** = extended merchandise value sold, before returns, excluding taxes and fees.
-- **Net sales** = gross sales minus returns.
-- **Returns** are counted on the day the return occurred (activity basis), not the original sale date.
-- **Orders** = distinct orders (tickets) per day and channel. Never count rows as orders:
-  one source row is one item on a ticket (about 12 items per ticket).
-- About 4.5% of store sales rows have no sale date; they are excluded from all
-  date-based reporting in these tables.
-- For web and catalog, the customer is the billing customer; location is the warehouse.
+## Definitions I had to get straight
 
-## Verified results (1-14 Jan 2002)
+These mattered more than the code. Get one of them wrong and every number
+after it is wrong too.
+
+- Gross sales is the extended price of what was sold, before returns, without
+  taxes and fees.
+- Net sales is gross minus returns.
+- Returns are counted on the day the return happened, not the day of the
+  original sale. Mixing those two up changes every daily number.
+- An order is a distinct ticket. One row in the source is one item on a
+  ticket, and there are about 12 items per ticket, so counting rows as orders
+  overstates orders by roughly 12 times.
+- About 4.5% of store sales rows have no sale date at all. They are real
+  sales, but they cannot go in any date based report, so these tables leave
+  them out.
+- For web and catalog, the customer is the billing customer and the location
+  is the warehouse. The source offers a few choices here; this is the one I
+  picked, and it is written down so the agent uses the same one.
+
+## What the numbers came out as (1 to 14 Jan 2002)
+
 - Gross sales: 60,023,366,486.73 | Returns: 5,130,624,872.13 | Net sales: 54,892,741,614.60
 - Net by channel: store 29,407,210,700.90 | catalog 14,553,183,186.55 | web 10,932,347,727.15
 - Return rate by channel: catalog 9.8% | store 9.1% | web 5.3%
 - Total orders: 2,598,807 | Best day: 2002-01-02 (10,595,422,126.45 net)
 
+Silver ties back to the source exactly, and Gold ties to Silver. Net equals
+gross minus returns to the cent. I checked all of that in SQL before anything
+else was built on top.
+
 ## Pipeline
-Job `retail_sales_pipeline` (ID 75761342656027), all Serverless:
-`02_silver_build` -> `03_gold_build` -> `04_returns_build` -> `05_quality_checks`.
-Every build is CREATE OR REPLACE from source, so re-running the Job heals bad data.
-Proven by a break-and-fix drill: removing the web channel from Silver made 2 of 4
-quality checks FAIL with a gate error; a Job re-run restored 4 PASS.
+
+The Job is called `retail_sales_pipeline` (ID 75761342656027), all Serverless.
+It runs `02_silver_build`, then `03_gold_build`, then `04_returns_build`, then
+`05_quality_checks`.
+
+Every build is CREATE OR REPLACE straight from source, so there is no
+incremental state to corrupt, and re-running the Job fixes bad data by
+rebuilding it. I tested that on purpose. I rebuilt Silver without the web
+channel, two of the four quality checks failed and the gate stopped the run,
+and then a Job re-run put everything back to 4 PASS.
 
 ![Databricks Job run](images/job_run.png)
 
 ## Dashboard
-**Retail Channel Sales** (published). Gold tables only: total net sales counter,
-gross by channel, daily net trend by channel, top 10 products table.
-Every widget value was verified against SQL.
+
+The dashboard is called Retail Channel Sales, and it is published. It reads
+Gold tables only: a total net sales counter, gross sales by channel, a daily
+net trend, and a top 10 products table. I checked every widget against SQL by
+hand, and two of them needed it: the trend chart first grouped the 14 days by
+month, which hid the whole pattern, and the top products query failed on a
+trailing semicolon in the dashboard editor.
 
 ![Retail Channel Sales dashboard](images/dashboard.png)
 
 ## Genie agent
-**Retail Gold Sales and Returns Performance Summary** (Agent ID 01f1e23a46481afa913829f8d5f969).
-Sources: the 4 Gold tables only. Instructions encode the definitions above, the
-Jan 1-14 2002 scope, and a default to net sales when a question is ambiguous.
-4 curated example queries.
+
+The agent is called Retail Gold Sales and Returns Performance Summary (Agent
+ID 01f1e23a46481afa913829f8d5f969). It can only see the four Gold tables. Its
+instructions carry the definitions above, limit it to 1 to 14 January 2002,
+and tell it to use net sales when someone just asks for "sales", and to say
+that it did. It also has four example queries to learn the shape of a good
+answer from.
 
 ![Genie agent answering net sales by channel](images/genie_answer.png)
 
-## Evaluation
-Benchmark of 10 questions, every expected answer verified by hand in SQL first
-(notebook `06_evaluation`): **10/10 correct** after manual review. Two judge flags
-were false positives (the judge objected to which Gold table the agent read;
-the values were exact). Trap tests: an out-of-scope March 2002 question was
-refused correctly, and the ambiguous question "What were sales?" defaulted to
-net sales and said so.
+## How I checked the agent
+
+I wrote 10 questions and worked out every expected answer in SQL by hand
+first (notebook `06_evaluation`), then ran them in the agent's Benchmark tab.
+The result was 10 out of 10 correct, after I reviewed the flagged ones
+myself. The automated judge flagged two answers. Both times the values were
+exact and the judge was objecting to which Gold table the agent had read
+from, so I marked them good and wrote down why.
+
+There were also two trap tests. Asked about March 2002, the agent refused and
+said the data only covers January 1 to 14. Asked "What were sales?", it
+answered with net sales and said so.
 
 ![Benchmark review](images/benchmark.png)
 
-## Limitations and next steps
-- Built on a 14-day slice; a production version would load full history incrementally.
-- The source 2003 data is partial, and NULL-date rows cannot appear in dated reports.
-- Next: add a schedule to the Job, and add Unity Catalog comments on Gold tables.
+## What I would do next
+
+- The slice is 14 days because of the free workspace. A real version would
+  load the full history once and then update it incrementally.
+- The 2003 data in the source is partial, so I would not report on it as a
+  full year.
+- Two small jobs are still open: putting the Job on a schedule, and adding
+  Unity Catalog comments on the Gold tables.
