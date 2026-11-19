@@ -6,6 +6,9 @@ data, 1 to 14 January 2002, because the full sales data is about 5 billion rows
 and a free workspace is not the place to copy all of it. The notebooks are in
 `/Workspace/Demo_Project/` in my workspace.
 
+Built with: Databricks (Serverless SQL warehouse), Delta Lake, Spark SQL,
+Unity Catalog, Databricks Jobs, AI/BI Dashboards, and Databricks Genie.
+
 ## Why I built it
 
 In the source data, sales sit in three separate channel tables: store, web, and
@@ -57,6 +60,30 @@ after it is wrong too.
 Silver ties back to the source exactly, and Gold ties to Silver. Net equals
 gross minus returns to the cent. I checked all of that in SQL before anything
 else was built on top.
+
+## How to run it
+
+1. You need a Databricks workspace. The Free Edition is enough, and it already
+   has the TPC-DS data under `samples.tpcds_sf1000`, so there is nothing to
+   download or load.
+2. Create the schema the tables live in: `CREATE SCHEMA IF NOT EXISTS workspace.retail;`
+   If you use a different catalog or schema name, change it in the notebook
+   code too, because the builds write to `workspace.retail`.
+3. Import the build files from the `sql/` folder of this repo into a folder in
+   your workspace: `02_silver_build.sql`, `03_gold_build.sql`,
+   `04_returns_build.sql`, `05_quality_checks.sql`. They import as notebooks.
+4. Run them in order, 02 then 03 then 04 then 05, on the Serverless Starter
+   Warehouse. The last one is the quality gate: it should show all 4 checks
+   PASS.
+5. To run it the way I do, create a Job with the four notebooks as tasks in
+   the same order and run the Job instead. That is the `retail_sales_pipeline`
+   Job described below.
+6. The dashboard and the agent sit on top of the Gold tables. For the agent,
+   create a Genie space over the four Gold tables and paste in the
+   instructions from `genie/instructions.md` and the examples from
+   `genie/example_queries.sql`. The questions in
+   `genie/benchmark_questions.md` and the SQL in `sql/06_evaluation.sql` are
+   how I checked its answers.
 
 ## Pipeline
 
