@@ -113,7 +113,7 @@ trailing semicolon in the dashboard editor.
 ## Genie agent
 
 The agent is called Retail Gold Sales and Returns Performance Summary (Agent
-ID 01f1e23a46481afa913829f8d5f969). It can only see the four Gold tables. Its
+ID 01f1e23a46481afa913829f8d5a6f969). It can only see the four Gold tables. Its
 instructions carry the definitions above, limit it to 1 to 14 January 2002,
 and tell it to use net sales when someone just asks for "sales", and to say
 that it did. It also has four example queries to learn the shape of a good
